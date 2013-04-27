@@ -86,8 +86,19 @@ window.onload = () ->
     coordsToRowCol = (x,y) ->
 
         #todo account for spacing
-        row = Math.floor ( (y - 100) / 40 )
-        col = Math.floor ( (x - 200) / 40 )
+        row = y - 100
+        if row > 120
+            row -= 10
+        if row > 240
+            row -= 10
+        row = Math.floor ( row / 40 )
+
+        col = x - 200
+        if col > 120
+            col -= 10
+        if col > 240
+            col -= 10
+        col = Math.floor ( col / 40 )
         console.log "row: " + row + "; col: " + col
 
         return [row, col]
