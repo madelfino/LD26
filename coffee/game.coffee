@@ -104,7 +104,7 @@ window.onload = () ->
         return [row, col]
 
     getBoardInfo = (r,c) ->
-        whichBoard = 3 * (r%3) + c%3
+        whichBoard = 3*Math.floor(r/3) + Math.floor(c/3)
         row = r % 3
         col = c % 3
         return board[whichBoard][row][col]
@@ -113,7 +113,7 @@ window.onload = () ->
         if mark != 'X' and mark != 'O'
             return false
         console.log 'valid mark'
-        whichBoard = 3 * (r%3) + c%3
+        whichBoard = 3*Math.floor(r/3) + Math.floor(c/3)
         row = r % 3
         col = c % 3
         if board[whichBoard][row][col] == ''
