@@ -6,6 +6,21 @@ window.onload = () ->
     ctx.fillStyle = "#BBBBBB"
     ctx.fillRect 0, 0, 800, 600
     ctx.fillStyle = "#AAAAAA"
+
+    fps = 50
+
+    run = () ->
+        update()
+        draw()
+        return
+
+    draw = () ->
+        drawBoard()
+        return
+
+    update = () ->
+        return
+
     drawBoard = () ->
         for i in [0..8]
             for j in [0..8]
@@ -22,6 +37,7 @@ window.onload = () ->
                 ctx.fillRect x, y, 38, 38
         return
 
-    drawBoard()
+    run()
+    intervalId = setInterval run, 1000 / fps
 
     return
