@@ -4,6 +4,7 @@ window.onload = () ->
     canvas = document.getElementById "stage"
     ctx = canvas.getContext '2d'
 
+    boardTurns = [1,1,1,1,1,1,1,1,1]
     board = new Array()
     for b in [0..8]
         smallBoard = new Array()
@@ -33,10 +34,8 @@ window.onload = () ->
 
     canvas.onclick = (e) ->
         if select
-            mark = if turn == 1 then 'X' else 'O'
             [r, c] = coordsToRowCol mouse.x, mouse.y
-            if setBoardInfo r, c, mark
-                turn = -turn
+            setBoardInfo r, c
         return
 
     drawBoard = () ->
@@ -109,18 +108,15 @@ window.onload = () ->
         col = c % 3
         return board[whichBoard][row][col]
 
-    setBoardInfo = (r,c,mark) ->
-        if mark != 'X' and mark != 'O'
-            return false
-        console.log 'valid mark'
+    setBoardInfo = (r,c) ->
         whichBoard = 3*Math.floor(r/3) + Math.floor(c/3)
+        mark = if boardTurns[whichBoard] == 1 then 'X' else 'O'
         row = r % 3
         col = c % 3
         if board[whichBoard][row][col] == ''
             board[whichBoard][row][col] = mark
-            console.log 'board marked'
+            boardTurns[whichBoard] = -boardTurns[whichBoard]
             return true
-        console.log 'board already marked'
         return false 
 
     intervalId = setInterval draw, 1000 / fps
