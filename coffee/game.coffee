@@ -85,7 +85,7 @@ window.onload = () ->
                 if boardWinners[j][i] == '' and not gameOver
                     x = 200 + 130 * i
                     y = 100 + 130 * j
-                    boardTimeouts[j][i]--
+                    boardTimeouts[j][i] -= (10 - numBoards())
                     if boardTimeouts[j][i] <= 0
                         boardTimeouts[j][i] = BOARD_TIMEOUT
                         b = whichBoard j*3, i*3
@@ -261,6 +261,14 @@ window.onload = () ->
 
     checkBigBoard = () ->
         return checkBoard boardWinners
+
+    numBoards = () ->
+        count = 0
+        for i in [0..2]
+            for j in [0..2]
+                if boardWinners[i][j] == ''
+                    count++
+        return count
 
     aimove = (b, roffset, coffset) ->
         if checkBoard(board[b]) != ''
