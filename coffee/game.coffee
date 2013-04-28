@@ -2,7 +2,7 @@ BOARD_TIMEOUT = 3000
 
 window.onload = () ->
 
-    turn = 1
+    gameOver = false
     canvas = document.getElementById "stage"
     ctx = canvas.getContext '2d'
 
@@ -125,6 +125,7 @@ window.onload = () ->
                 ctx.lineTo x, y + 380
                 ctx.stroke()
                 ctx.lineWidth = 1;
+                gameOver = true
         if checkBigBoard() == 'O'
                 ctx.lineWidth = 10;
                 ctx.strokeStyle = "#DDDDDD"
@@ -133,6 +134,7 @@ window.onload = () ->
                 ctx.closePath()
                 ctx.stroke()
                 ctx.lineWidth = 1;
+                gameOver = true
             
         return
 
@@ -163,8 +165,7 @@ window.onload = () ->
 
     setBoardInfo = (r,c) ->
         whichBoard = 3*Math.floor(r/3) + Math.floor(c/3)
-        console.log boardWinners
-        if boardWinners[Math.floor(r/3)][Math.floor(c/3)] == 'X' or boardWinners[Math.floor(r/3)][Math.floor(c/3)] == 'O'
+        if gameOver or (boardWinners[Math.floor(r/3)][Math.floor(c/3)] == 'X' or boardWinners[Math.floor(r/3)][Math.floor(c/3)] == 'O')
             return false
         mark = if boardTurns[whichBoard] == 1 then 'X' else 'O'
         row = r % 3
