@@ -88,8 +88,9 @@ window.onload = () ->
                     boardTimeouts[j][i]--
                     if boardTimeouts[j][i] <= 0
                         boardTimeouts[j][i] = BOARD_TIMEOUT
-                        #boardTurns[j*3+i] = -1
-                        #aimove whichBoard(j*3+i), j*3, i*3
+                        b = whichBoard j*3, i*3
+                        boardTurns[b] = -1
+                        aimove b, j*3, i*3
                     t = boardTimeouts[j][i]
                     #ctx.fillStyle = "#333333"
                     #ctx.fillRect x, y, 120, 120
