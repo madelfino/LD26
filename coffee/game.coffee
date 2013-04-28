@@ -47,8 +47,21 @@ window.onload = () ->
         return
 
     canvas.onmousemove = (e) ->
-        mouse.x = e.clientX
-        mouse.y = e.clientY
+
+        totalOffsetX = 0
+        totalOffsetY = 0
+        canvasX = 0
+        canvasY = 0
+        curElem = canvas
+        cond = true
+        while cond
+            totalOffsetX += curElem.offsetLeft - curElem.scrollLeft
+            totalOffsetY += curElem.offsetTop - curElem.scrollTop
+            cond = (curElem = curElem.offsetParent)
+        canvasX = e.pageX - totalOffsetX
+        canvasY = e.pageY - totalOffsetY
+        mouse.x = canvasX
+        mouse.y = canvasY
         return
 
     canvas.onclick = (e) ->
