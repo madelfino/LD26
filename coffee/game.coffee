@@ -120,69 +120,47 @@ window.onload = () ->
                     ctx.fillRect x, y, 38, 38
                     ctx.fillStyle = "#AAAAAA"
                     select = true
-                if getBoardInfo(j,i) == 'O'
-                    ctx.strokeStyle = "#DDDDDD"
-                    ctx.beginPath()
-                    ctx.arc x+19, y+19, 19, 0, 2 * Math.PI, true
-                    ctx.closePath()
-                    ctx.stroke()
                 if getBoardInfo(j,i) == 'X'
-                    ctx.strokeStyle = "#555555"
-                    ctx.beginPath()
-                    ctx.moveTo x, y
-                    ctx.lineTo x + 38, y + 38
-                    ctx.stroke()
-                    ctx.moveTo x + 38, y
-                    ctx.lineTo x, y + 38
-                    ctx.stroke()
+                    drawX x, y, 38, 1
+                if getBoardInfo(j,i) == 'O'
+                    drawO x, y, 19, 1
         for i in [0..2]
             for j in [0..2]
                 x = 200 + i * 130
                 y = 100 + j * 130
                 if boardWinners[j][i] == 'X'
-                    ctx.lineWidth = 5;
-                    ctx.strokeStyle = "#555555"
-                    ctx.beginPath()
-                    ctx.moveTo x, y
-                    ctx.lineTo x + 120, y + 120
-                    ctx.stroke()
-                    ctx.moveTo x + 120, y
-                    ctx.lineTo x, y + 120
-                    ctx.stroke()
-                    ctx.lineWidth = 1;
+                    drawX x, y, 120, 5
                 if boardWinners[j][i] == 'O'
-                    ctx.lineWidth = 5;
-                    ctx.strokeStyle = "#DDDDDD"
-                    ctx.beginPath()
-                    ctx.arc x+60, y+60, 60, 0, 2 * Math.PI, true
-                    ctx.closePath()
-                    ctx.stroke()
-                    ctx.lineWidth = 1;
-        x = 200
-        y = 100
+                    drawO x, y, 60, 5
         if checkBigBoard() == 'X'
-                ctx.lineWidth = 10;
-                ctx.strokeStyle = "#555555"
-                ctx.beginPath()
-                ctx.moveTo x, y
-                ctx.lineTo x + 380, y + 380
-                ctx.stroke()
-                ctx.moveTo x + 380, y
-                ctx.lineTo x, y + 380
-                ctx.stroke()
-                ctx.lineWidth = 1;
+                drawX 200, 100, 380, 10
                 gameOver = true
         if checkBigBoard() == 'O'
-                ctx.lineWidth = 10;
-                ctx.strokeStyle = "#DDDDDD"
-                ctx.beginPath()
-                ctx.arc x+190, y+190, 190, 0, 2 * Math.PI, true
-                ctx.closePath()
-                ctx.stroke()
-                ctx.lineWidth = 1;
+                drawO 200, 100, 190, 10
                 gameOver = true
             
         return
+
+    drawX = (x, y, w, lw) ->
+        ctx.lineWidth = lw
+        ctx.strokeStyle = "#555555"
+        ctx.beginPath()
+        ctx.moveTo x, y
+        ctx.lineTo x + w, y + w
+        ctx.stroke()
+        ctx.moveTo x + w, y
+        ctx.lineTo x, y + w
+        ctx.stroke()
+        ctx.lineWidth = 1
+
+    drawO = (x, y, r, lw) ->
+        ctx.lineWidth = lw
+        ctx.strokeStyle = "#DDDDDD"
+        ctx.beginPath()
+        ctx.arc x + r, y + r, r, 0, 2 * Math.PI, true
+        ctx.closePath()
+        ctx.stroke()
+        ctx.lineWidth = 1
 
     coordsToRowCol = (x,y) ->
 
