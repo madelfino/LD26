@@ -6,26 +6,31 @@ window.onload = () ->
     canvas = document.getElementById "stage"
     ctx = canvas.getContext '2d'
 
-    boardTurns = [1,1,1,1,1,1,1,1,1]
-    boardWinners = [['','',''],['','',''],['','','']]
+    boardTurns = []
+    boardWinners = []
     boardTimeouts = []
-    board = new Array()
-    for b in [0..8]
-        smallBoard = new Array()
-        for r in [0..2]
+    board = []
+    resetBoard = () ->
+        board = new Array()
+        boardWinners = [['','',''],['','',''],['','','']]
+        boardTurns = [1,1,1,1,1,1,1,1,1]
+        for b in [0..8]
+            smallBoard = new Array()
+            for r in [0..2]
+                row = new Array()
+                row[0] = ''
+                row[1] = ''
+                row[2] = '' 
+                smallBoard.push row
+            board.push smallBoard
+        for i in [0..2]
             row = new Array()
-            row[0] = ''
-            row[1] = ''
-            row[2] = '' 
-            smallBoard.push row
-        board.push smallBoard
+            for j in [0..2]
+                row[j] = BOARD_TIMEOUT
+            boardTimeouts.push row
+    resetBoard()
     mouse = { x:0, y:0 }
     select = false
-    for i in [0..2]
-        row = new Array()
-        for j in [0..2]
-            row[j] = BOARD_TIMEOUT
-        boardTimeouts.push row
     fps = 50
 
     run = () ->
@@ -65,7 +70,9 @@ window.onload = () ->
         return
 
     canvas.onclick = (e) ->
-        console.log boardTimeouts
+        if gameOver
+            gameOver = false
+            resetBoard()
         if select
             [r, c] = coordsToRowCol mouse.x, mouse.y
             if getTurn(r, c) == 'X'
@@ -78,11 +85,12 @@ window.onload = () ->
                 if boardWinners[j][i] == '' and not gameOver
                     x = 200 + 130 * i
                     y = 100 + 130 * j
-                    boardTimeouts[j][i]--
+                    boardTimeouts[j][i] -= (10 - numBoards())
                     if boardTimeouts[j][i] <= 0
                         boardTimeouts[j][i] = BOARD_TIMEOUT
-                        #boardTurns[j*3+i] = -1
-                        #aimove whichBoard(j*3+i), j*3, i*3
+                        b = whichBoard j*3, i*3
+                        boardTurns[b] = -1
+                        aimove b, j*3, i*3
                     t = boardTimeouts[j][i]
                     #ctx.fillStyle = "#333333"
                     #ctx.fillRect x, y, 120, 120
@@ -191,7 +199,6 @@ window.onload = () ->
         if col > 240
             col -= 10
         col = Math.floor ( col / 40 )
-        console.log "row: " + row + "; col: " + col
 
         return [row, col]
 
@@ -255,8 +262,15 @@ window.onload = () ->
     checkBigBoard = () ->
         return checkBoard boardWinners
 
+    numBoards = () ->
+        count = 0
+        for i in [0..2]
+            for j in [0..2]
+                if boardWinners[i][j] == ''
+                    count++
+        return count
+
     aimove = (b, roffset, coffset) ->
-        console.log board[b]
         if checkBoard(board[b]) != ''
             return
         row = Math.floor (Math.random()*3)
