@@ -5,41 +5,50 @@
   BOARD_TIMEOUT = 1000;
 
   window.onload = function() {
-    var aimove, b, board, boardTimeouts, boardTurns, boardWinners, canvas, checkBigBoard, checkBoard, coordsToRowCol, ctx, drawBoard, fps, gameIntervalId, gameOver, getBoardInfo, getTurn, i, j, mouse, r, row, run, select, setBoardInfo, smallBoard, updateTimers, whichBoard, _i, _j, _k, _l;
+    var aimove, board, boardTimeouts, boardTurns, boardWinners, canvas, checkBigBoard, checkBoard, coordsToRowCol, ctx, drawBoard, fps, gameIntervalId, gameOver, getBoardInfo, getTurn, mouse, numBoards, resetBoard, run, select, setBoardInfo, updateTimers, whichBoard;
     gameOver = false;
     canvas = document.getElementById("stage");
     ctx = canvas.getContext('2d');
-    boardTurns = [1, 1, 1, 1, 1, 1, 1, 1, 1];
-    boardWinners = [['', '', ''], ['', '', ''], ['', '', '']];
+    boardTurns = [];
+    boardWinners = [];
     boardTimeouts = [];
-    board = new Array();
-    for (b = _i = 0; _i <= 8; b = ++_i) {
-      smallBoard = new Array();
-      for (r = _j = 0; _j <= 2; r = ++_j) {
-        row = new Array();
-        row[0] = '';
-        row[1] = '';
-        row[2] = '';
-        smallBoard.push(row);
+    board = [];
+    resetBoard = function() {
+      var b, i, j, r, row, smallBoard, _i, _j, _k, _l, _results;
+      board = new Array();
+      boardWinners = [['', '', ''], ['', '', ''], ['', '', '']];
+      boardTurns = [1, 1, 1, 1, 1, 1, 1, 1, 1];
+      for (b = _i = 0; _i <= 8; b = ++_i) {
+        smallBoard = new Array();
+        for (r = _j = 0; _j <= 2; r = ++_j) {
+          row = new Array();
+          row[0] = '';
+          row[1] = '';
+          row[2] = '';
+          smallBoard.push(row);
+        }
+        board.push(smallBoard);
       }
-      board.push(smallBoard);
-    }
+      _results = [];
+      for (i = _k = 0; _k <= 2; i = ++_k) {
+        row = new Array();
+        for (j = _l = 0; _l <= 2; j = ++_l) {
+          row[j] = BOARD_TIMEOUT;
+        }
+        _results.push(boardTimeouts.push(row));
+      }
+      return _results;
+    };
+    resetBoard();
     mouse = {
       x: 0,
       y: 0
     };
     select = false;
-    for (i = _k = 0; _k <= 2; i = ++_k) {
-      row = new Array();
-      for (j = _l = 0; _l <= 2; j = ++_l) {
-        row[j] = BOARD_TIMEOUT;
-      }
-      boardTimeouts.push(row);
-    }
     fps = 50;
     run = function() {
-      var _m;
-      for (i = _m = 0; _m <= 8; i = ++_m) {
+      var i, _i;
+      for (i = _i = 0; _i <= 8; i = ++_i) {
         boardWinners[Math.floor(i / 3)][i % 3] = checkBoard(board[i]);
       }
       ctx.fillStyle = "#BBBBBB";
@@ -68,8 +77,11 @@
       mouse.y = canvasY;
     };
     canvas.onclick = function(e) {
-      var c, _ref;
-      console.log(boardTimeouts);
+      var c, r, _ref;
+      if (gameOver) {
+        gameOver = false;
+        resetBoard();
+      }
       if (select) {
         _ref = coordsToRowCol(mouse.x, mouse.y), r = _ref[0], c = _ref[1];
         if (getTurn(r, c) === 'X') {
@@ -78,19 +90,22 @@
       }
     };
     updateTimers = function() {
-      var t, x, y, _m, _results;
+      var b, i, j, t, x, y, _i, _results;
       _results = [];
-      for (i = _m = 0; _m <= 2; i = ++_m) {
+      for (i = _i = 0; _i <= 2; i = ++_i) {
         _results.push((function() {
-          var _n, _results1;
+          var _j, _results1;
           _results1 = [];
-          for (j = _n = 0; _n <= 2; j = ++_n) {
+          for (j = _j = 0; _j <= 2; j = ++_j) {
             if (boardWinners[j][i] === '' && !gameOver) {
               x = 200 + 130 * i;
               y = 100 + 130 * j;
-              boardTimeouts[j][i]--;
+              boardTimeouts[j][i] -= 10 - numBoards();
               if (boardTimeouts[j][i] <= 0) {
                 boardTimeouts[j][i] = BOARD_TIMEOUT;
+                b = whichBoard(j * 3, i * 3);
+                boardTurns[b] = -1;
+                aimove(b, j * 3, i * 3);
               }
               t = boardTimeouts[j][i];
               ctx.fillStyle = "#333333";
@@ -105,11 +120,11 @@
       return _results;
     };
     drawBoard = function() {
-      var x, y, _m, _n, _o, _p;
+      var i, j, x, y, _i, _j, _k, _l;
       ctx.fillStyle = "#AAAAAA";
       select = false;
-      for (i = _m = 0; _m <= 8; i = ++_m) {
-        for (j = _n = 0; _n <= 8; j = ++_n) {
+      for (i = _i = 0; _i <= 8; i = ++_i) {
+        for (j = _j = 0; _j <= 8; j = ++_j) {
           x = 200 + i * 40;
           if (i > 2) {
             x += 10;
@@ -150,8 +165,8 @@
           }
         }
       }
-      for (i = _o = 0; _o <= 2; i = ++_o) {
-        for (j = _p = 0; _p <= 2; j = ++_p) {
+      for (i = _k = 0; _k <= 2; i = ++_k) {
+        for (j = _l = 0; _l <= 2; j = ++_l) {
           x = 200 + i * 130;
           y = 100 + j * 130;
           if (boardWinners[j][i] === 'X') {
@@ -204,7 +219,7 @@
       }
     };
     coordsToRowCol = function(x, y) {
-      var col;
+      var col, row;
       row = y - 100;
       if (row > 120) {
         row -= 10;
@@ -221,14 +236,13 @@
         col -= 10;
       }
       col = Math.floor(col / 40);
-      console.log("row: " + row + "; col: " + col);
       return [row, col];
     };
     whichBoard = function(r, c) {
       return 3 * Math.floor(r / 3) + Math.floor(c / 3);
     };
     getBoardInfo = function(r, c) {
-      var col;
+      var b, col, row;
       b = whichBoard(r, c);
       row = r % 3;
       col = c % 3;
@@ -242,7 +256,7 @@
       }
     };
     setBoardInfo = function(r, c) {
-      var col, mark;
+      var b, col, mark, row;
       b = whichBoard(r, c);
       if (gameOver || (boardWinners[Math.floor(r / 3)][Math.floor(c / 3)] === 'X' || boardWinners[Math.floor(r / 3)][Math.floor(c / 3)] === 'O')) {
         return false;
@@ -262,8 +276,8 @@
       return false;
     };
     checkBoard = function(b) {
-      var movesAvailable, _m, _n, _o;
-      for (i = _m = 0; _m <= 2; i = ++_m) {
+      var i, j, movesAvailable, _i, _j, _k;
+      for (i = _i = 0; _i <= 2; i = ++_i) {
         if (b[i][0] === 'X' && b[i][1] === 'X' && b[i][2] === 'X') {
           return 'X';
         }
@@ -290,8 +304,8 @@
         return 'O';
       }
       movesAvailable = false;
-      for (i = _n = 0; _n <= 2; i = ++_n) {
-        for (j = _o = 0; _o <= 2; j = ++_o) {
+      for (i = _j = 0; _j <= 2; i = ++_j) {
+        for (j = _k = 0; _k <= 2; j = ++_k) {
           if (b[i][j] === '') {
             movesAvailable = true;
           }
@@ -306,9 +320,20 @@
     checkBigBoard = function() {
       return checkBoard(boardWinners);
     };
+    numBoards = function() {
+      var count, i, j, _i, _j;
+      count = 0;
+      for (i = _i = 0; _i <= 2; i = ++_i) {
+        for (j = _j = 0; _j <= 2; j = ++_j) {
+          if (boardWinners[i][j] === '') {
+            count++;
+          }
+        }
+      }
+      return count;
+    };
     aimove = function(b, roffset, coffset) {
-      var col;
-      console.log(board[b]);
+      var col, row;
       if (checkBoard(board[b]) !== '') {
         return;
       }
