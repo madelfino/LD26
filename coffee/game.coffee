@@ -44,7 +44,8 @@ window.onload = () ->
     canvas.onclick = (e) ->
         if select
             [r, c] = coordsToRowCol mouse.x, mouse.y
-            setBoardInfo r, c
+            if getTurn(r, c) == 'X'
+                setBoardInfo r, c
         return
 
     drawBoard = () ->
@@ -157,32 +158,40 @@ window.onload = () ->
 
         return [row, col]
 
+    whichBoard = (r, c) ->
+        return (3*Math.floor(r/3) + Math.floor(c/3))
+
     getBoardInfo = (r,c) ->
-        whichBoard = 3*Math.floor(r/3) + Math.floor(c/3)
+        b = whichBoard r,c
         row = r % 3
         col = c % 3
-        return board[whichBoard][row][col]
+        return board[b][row][col]
+
+    getTurn = (r, c) ->
+        return if boardTurns[whichBoard(r,c)] == 1 then 'X' else 'O'
 
     setBoardInfo = (r,c) ->
-        whichBoard = 3*Math.floor(r/3) + Math.floor(c/3)
+        b = whichBoard r,c
         if gameOver or (boardWinners[Math.floor(r/3)][Math.floor(c/3)] == 'X' or boardWinners[Math.floor(r/3)][Math.floor(c/3)] == 'O')
             return false
-        mark = if boardTurns[whichBoard] == 1 then 'X' else 'O'
+        mark = getTurn r,c
         row = r % 3
         col = c % 3
-        if board[whichBoard][row][col] == ''
-            board[whichBoard][row][col] = mark
-            boardTurns[whichBoard] = -boardTurns[whichBoard]
+        if board[b][row][col] == ''
+            board[b][row][col] = mark
+            boardTurns[b] = -boardTurns[b]
+            if mark == 'X'
+                aimove b, r - r%3, c - c%3
             return true
         return false 
 
     checkBoard = (b) ->
         for i in [0..2]
-            if b[i] == ['X','X','X']
+            if b[i][0] == 'X' and b[i][1] == 'X' and b[i][2] == 'X'
                 return 'X'
             if b[0][i] == 'X' and b[1][i] == 'X' and b[2][i] == 'X'
                 return 'X'
-            if b[i] == ['O','O','O']
+            if b[i][0] == 'O' and b[i][1] == 'O' and b[i][2] == 'O'
                 return 'O'
             if b[0][i] == 'O' and b[1][i] == 'O' and b[2][i] == 'O'
                 return 'O'
@@ -202,6 +211,25 @@ window.onload = () ->
     checkBigBoard = () ->
         return checkBoard boardWinners
 
-    intervalId = setInterval run, 1000 / fps
+    aimove = (b, roffset, coffset) ->
+        console.log board[b]
+        #if checkBoard board[b] != ''
+            #return
+        movesAvailable = false
+        for i in [0..2]
+            for j in [0..2]
+                if board[b][i][j] == ''
+                    movesAvailable = true
+        if movesAvailable == false
+            return
+        row = Math.floor (Math.random()*3)
+        col = Math.floor (Math.random()*3)
+        while board[b][row][col] != ''
+            row = Math.floor (Math.random()*3)
+            col = Math.floor (Math.random()*3)
+        row += roffset
+        col += coffset
+        setBoardInfo row, col
 
+    gameIntervalId = setInterval run, 1000 / fps
     return
