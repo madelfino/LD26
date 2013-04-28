@@ -62,7 +62,7 @@ window.onload = () ->
     updateTimers = () ->
         for i in [0..2]
             for j in [0..2]
-                if boardWinners[j][i] == '' #and checkBigBoard() == ''
+                if boardWinners[j][i] == '' and not gameOver
                     x = 200 + 130 * i
                     y = 100 + 130 * j
                     boardTimeouts[j][i]--
