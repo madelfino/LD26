@@ -67,13 +67,14 @@ window.onload = () ->
                     y = 100 + 130 * j
                     boardTimeouts[j][i]--
                     if boardTimeouts[j][i] <= 0
-                        boardTimeouts[j][i] = 0
-                        #times up
+                        boardTimeouts[j][i] = BOARD_TIMEOUT
+                        #boardTurns[j*3+i] = -1
+                        #aimove whichBoard(j*3+i), j*3, i*3
                     t = boardTimeouts[j][i]
                     #ctx.fillStyle = "#333333"
                     #ctx.fillRect x, y, 120, 120
                     ctx.fillStyle = "#333333"
-                    ctx.fillRect x, y, 118 - 118 * (t / BOARD_TIMEOUT), 118
+                    ctx.fillRect x, y, 118 * (t / BOARD_TIMEOUT), 118
 
     drawBoard = () ->
 
