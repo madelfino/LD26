@@ -1,4 +1,4 @@
-BOARD_TIMEOUT = 3000
+BOARD_TIMEOUT = 1000
 
 window.onload = () ->
 
@@ -8,6 +8,7 @@ window.onload = () ->
 
     boardTurns = [1,1,1,1,1,1,1,1,1]
     boardWinners = [['','',''],['','',''],['','','']]
+    boardTimeouts = []
     board = new Array()
     for b in [0..8]
         smallBoard = new Array()
@@ -20,20 +21,29 @@ window.onload = () ->
         board.push smallBoard
     mouse = { x:0, y:0 }
     select = false
-
+    for i in [0..2]
+        row = new Array()
+        for j in [0..2]
+            row[j] = BOARD_TIMEOUT
+        boardTimeouts.push row
     fps = 50
 
     run = () ->
 
         for i in [0..8]
             boardWinners[Math.floor(i/3)][i%3] = checkBoard board[i]
-        checkBigBoard()
+
+        #draw background
+        ctx.fillStyle = "#BBBBBB"
+        ctx.fillRect 0, 0, 800, 600
+
+        updateTimers()
         drawBoard()
 
         #draw cursor
         ctx.fillStyle = "#EEEEEE"
         ctx.fillRect mouse.x, mouse.y, 5, 5
-        
+
         return
 
     canvas.onmousemove = (e) ->
@@ -42,17 +52,30 @@ window.onload = () ->
         return
 
     canvas.onclick = (e) ->
+        console.log boardTimeouts
         if select
             [r, c] = coordsToRowCol mouse.x, mouse.y
             if getTurn(r, c) == 'X'
                 setBoardInfo r, c
         return
 
-    drawBoard = () ->
+    updateTimers = () ->
+        for i in [0..2]
+            for j in [0..2]
+                if boardWinners[j][i] == '' #and checkBigBoard() == ''
+                    x = 200 + 130 * i
+                    y = 100 + 130 * j
+                    boardTimeouts[j][i]--
+                    if boardTimeouts[j][i] <= 0
+                        boardTimeouts[j][i] = 0
+                        #times up
+                    t = boardTimeouts[j][i]
+                    #ctx.fillStyle = "#333333"
+                    #ctx.fillRect x, y, 120, 120
+                    ctx.fillStyle = "#333333"
+                    ctx.fillRect x, y, 118 - 118 * (t / BOARD_TIMEOUT), 118
 
-        #draw background
-        ctx.fillStyle = "#BBBBBB"
-        ctx.fillRect 0, 0, 800, 600
+    drawBoard = () ->
 
         #draw cells
         ctx.fillStyle = "#AAAAAA"
@@ -180,6 +203,7 @@ window.onload = () ->
         if board[b][row][col] == ''
             board[b][row][col] = mark
             boardTurns[b] = -boardTurns[b]
+            boardTimeouts[Math.floor(b/3)][b%3] = BOARD_TIMEOUT
             if mark == 'X'
                 aimove b, r - r%3, c - c%3
             return true
@@ -206,7 +230,13 @@ window.onload = () ->
         if b[0][2] == 'O' and b[1][1] == 'O' and b[2][0] == 'O'
             return 'O'
 
-        return ''
+        movesAvailable = false
+        for i in [0..2]
+            for j in [0..2]
+                if b[i][j] == ''
+                    movesAvailable = true
+
+        return if movesAvailable then '' else 'C'
 
     checkBigBoard = () ->
         return checkBoard boardWinners
