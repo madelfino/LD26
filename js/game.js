@@ -76,11 +76,11 @@
               y = 100 + 130 * j;
               boardTimeouts[j][i]--;
               if (boardTimeouts[j][i] <= 0) {
-                boardTimeouts[j][i] = 0;
+                boardTimeouts[j][i] = BOARD_TIMEOUT;
               }
               t = boardTimeouts[j][i];
               ctx.fillStyle = "#333333";
-              _results1.push(ctx.fillRect(x, y, 118 - 118 * (t / BOARD_TIMEOUT), 118));
+              _results1.push(ctx.fillRect(x, y, 118 * (t / BOARD_TIMEOUT), 118));
             } else {
               _results1.push(void 0);
             }
