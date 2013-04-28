@@ -50,8 +50,22 @@
       ctx.fillRect(mouse.x, mouse.y, 5, 5);
     };
     canvas.onmousemove = function(e) {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      var canvasX, canvasY, cond, curElem, totalOffsetX, totalOffsetY;
+      totalOffsetX = 0;
+      totalOffsetY = 0;
+      canvasX = 0;
+      canvasY = 0;
+      curElem = canvas;
+      cond = true;
+      while (cond) {
+        totalOffsetX += curElem.offsetLeft - curElem.scrollLeft;
+        totalOffsetY += curElem.offsetTop - curElem.scrollTop;
+        cond = (curElem = curElem.offsetParent);
+      }
+      canvasX = e.pageX - totalOffsetX;
+      canvasY = e.pageY - totalOffsetY;
+      mouse.x = canvasX;
+      mouse.y = canvasY;
     };
     canvas.onclick = function(e) {
       var c, _ref;
