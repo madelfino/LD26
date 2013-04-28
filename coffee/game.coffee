@@ -6,26 +6,31 @@ window.onload = () ->
     canvas = document.getElementById "stage"
     ctx = canvas.getContext '2d'
 
-    boardTurns = [1,1,1,1,1,1,1,1,1]
-    boardWinners = [['','',''],['','',''],['','','']]
+    boardTurns = []
+    boardWinners = []
     boardTimeouts = []
-    board = new Array()
-    for b in [0..8]
-        smallBoard = new Array()
-        for r in [0..2]
+    board = []
+    resetBoard = () ->
+        board = new Array()
+        boardWinners = [['','',''],['','',''],['','','']]
+        boardTurns = [1,1,1,1,1,1,1,1,1]
+        for b in [0..8]
+            smallBoard = new Array()
+            for r in [0..2]
+                row = new Array()
+                row[0] = ''
+                row[1] = ''
+                row[2] = '' 
+                smallBoard.push row
+            board.push smallBoard
+        for i in [0..2]
             row = new Array()
-            row[0] = ''
-            row[1] = ''
-            row[2] = '' 
-            smallBoard.push row
-        board.push smallBoard
+            for j in [0..2]
+                row[j] = BOARD_TIMEOUT
+            boardTimeouts.push row
+    resetBoard()
     mouse = { x:0, y:0 }
     select = false
-    for i in [0..2]
-        row = new Array()
-        for j in [0..2]
-            row[j] = BOARD_TIMEOUT
-        boardTimeouts.push row
     fps = 50
 
     run = () ->
@@ -65,7 +70,9 @@ window.onload = () ->
         return
 
     canvas.onclick = (e) ->
-        console.log boardTimeouts
+        if gameOver
+            gameOver = false
+            resetBoard()
         if select
             [r, c] = coordsToRowCol mouse.x, mouse.y
             if getTurn(r, c) == 'X'
@@ -191,7 +198,6 @@ window.onload = () ->
         if col > 240
             col -= 10
         col = Math.floor ( col / 40 )
-        console.log "row: " + row + "; col: " + col
 
         return [row, col]
 
@@ -256,7 +262,6 @@ window.onload = () ->
         return checkBoard boardWinners
 
     aimove = (b, roffset, coffset) ->
-        console.log board[b]
         if checkBoard(board[b]) != ''
             return
         row = Math.floor (Math.random()*3)
