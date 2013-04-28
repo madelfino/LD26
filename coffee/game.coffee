@@ -243,14 +243,7 @@ window.onload = () ->
 
     aimove = (b, roffset, coffset) ->
         console.log board[b]
-        #if checkBoard board[b] != ''
-            #return
-        movesAvailable = false
-        for i in [0..2]
-            for j in [0..2]
-                if board[b][i][j] == ''
-                    movesAvailable = true
-        if movesAvailable == false
+        if checkBoard(board[b]) != ''
             return
         row = Math.floor (Math.random()*3)
         col = Math.floor (Math.random()*3)
