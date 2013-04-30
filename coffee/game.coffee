@@ -92,8 +92,6 @@ window.onload = () ->
                         boardTurns[b] = -1
                         aimove b, j*3, i*3
                     t = boardTimeouts[j][i]
-                    #ctx.fillStyle = "#333333"
-                    #ctx.fillRect x, y, 120, 120
                     ctx.fillStyle = "#333333"
                     ctx.fillRect x, y, 118 * (t / BOARD_TIMEOUT), 118
 
@@ -251,6 +249,21 @@ window.onload = () ->
     aimove = (b, roffset, coffset) ->
         if checkBoard(board[b]) != ''
             return
+        for move in getMoves b
+            newBoard = []
+            newBoard.push new Array() for i in [0..2]
+            for i in [0..2]
+                for j in [0..2]
+                    newBoard[i][j] = board[b][i][j]
+
+            newBoard[move[0]][move[1]] = 'O'
+            if (checkBoard newBoard) == 'O'
+                setBoardInfo move[0] + roffset, move[1] + coffset
+                return
+            newBoard[move[0]][move[1]] = 'X'
+            if (checkBoard newBoard) == 'X'
+                setBoardInfo move[0] + roffset, move[1] + coffset
+                return
         row = Math.floor (Math.random()*3)
         col = Math.floor (Math.random()*3)
         while board[b][row][col] != ''
@@ -259,6 +272,14 @@ window.onload = () ->
         row += roffset
         col += coffset
         setBoardInfo row, col
+
+    getMoves = (b) ->
+        moves = []
+        for i in [0..2]
+            for j in [0..2]
+                if board[b][i][j] == ''
+                    moves.push [i,j]
+        return moves
 
     gameIntervalId = setInterval run, 1000 / fps
     return
