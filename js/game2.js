@@ -2,7 +2,7 @@
 (function() {
   var BOARD_TIMEOUT;
 
-  BOARD_TIMEOUT = 1000;
+  BOARD_TIMEOUT = 666;
 
   window.onload = function() {
     var aimove, board, boardTimeouts, boardTurns, boardWinners, canvas, checkBigBoard, checkBoard, coordsToRowCol, ctx, drawBoard, drawO, drawX, fps, gameIntervalId, gameOver, getBoardInfo, getMoves, getTurn, mouse, numBoards, resetBoard, run, select, setBoardInfo, updateTimers, whichBoard;
