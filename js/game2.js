@@ -100,7 +100,7 @@
             if (boardWinners[j][i] === '' && !gameOver) {
               x = 200 + 130 * i;
               y = 100 + 130 * j;
-              boardTimeouts[j][i] -= 10 - numBoards();
+              boardTimeouts[j][i] -= 10 / numBoards();
               if (boardTimeouts[j][i] <= 0) {
                 boardTimeouts[j][i] = BOARD_TIMEOUT;
                 b = whichBoard(j * 3, i * 3);
